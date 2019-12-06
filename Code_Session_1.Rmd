@@ -1,0 +1,336 @@
+---
+title: "INTRODUCTION TO R"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,results="hide")
+```
+
+# Data types
+
+### Numeric
+
+```{r}
+    sbp <- 129
+    sbp
+    class(sbp)
+
+    weight <- 76.3
+    weight
+    class(weight)
+```
+
+### Character
+
+```{r}
+address <- "16 Rockbarton Salthil, Galway"
+address
+class(address)
+```
+
+### Factors
+```{r}
+gender <- factor("Male",levels=c("Male","Female"))
+gender
+class(gender)
+```
+
+### Order Factors
+```{r}
+age_cat <- ordered("Middle age",levels=c("Young","Middle age","Elderly"))
+age_cat
+class(age_cat)
+```
+
+
+### Logical
+```{r}
+high_sbp <- sbp>140
+high_sbp
+class(high_sbp)
+```
+
+### Dates
+```{r}
+dob <- as.Date("11/11/1971",format="%d/%m/%Y")
+dob
+class(dob)
+```
+
+
+
+## Some basic manipulations
+
+### Numeric
+```{r}
+sbp * 2
+sbp ^ 2
+log(sbp)
+sqrt(sbp)
+```
+
+### Dates
+```{r}
+today <- as.Date(Sys.time())
+today
+class(today)
+Age <- as.numeric( round ( (today - dob)/365.25,0) )
+```
+
+### Character
+```{r}
+paste(address , ", Ireland",sep="")
+```
+
+### Ordered Factors
+```{r}
+age_cat > "Young"
+age_cat > "Elderly"
+```
+
+### Dates
+```{r}
+dob +3
+dob > today
+dob < today
+```
+
+
+
+## Some basic class transformations 
+
+### Numeric to ...
+```{r}
+as.character(sbp)
+as.integer(weight)
+as.factor(sbp)
+```
+
+### Character to ...
+```{r}
+as.factor(address)
+```
+
+### Factors to ...
+```{r}
+as.character(gender)
+as.numeric(gender)
+```
+
+Be careful when transforming Factors to Numeric
+
+ECOG performance status
+
+```{r}
+ecog <- factor("3",levels= c("0","1","2","3","4","5"))
+as.numeric(as.character(ecog))
+```
+
+### Dates to ...
+```{r}
+as.character(dob,format="%d-%b-%Y")
+```
+
+
+
+
+# Data Structures
+
+## Vectors
+
+#### Numeric
+```{r}
+sbp <- c(134,123,150,121)
+sbp
+class(sbp)
+```
+
+#### Character
+```{r}
+address <- c("Rockbarton","Knocnacarra","Salthill","Westside")
+address
+class(address)
+```
+
+#### Factors
+```{r}
+gender <- factor( c("Male","Male","Female","Female") , levels = c("Male","Female"))
+gender
+class(gender)
+```
+
+#### Logical
+```{r}
+high_sbp <- sbp >130
+high_sbp
+class(high_sbp)
+```
+
+#### Dates
+```{r}
+dob <- c("11/11/1971","23/12/1965","2/03/1980","4/8/1976")
+dob <- as.Date(dob,format="%d/%m/%Y")
+dob
+class(dob)
+
+
+```
+
+### Some basic vectors manipulations
+
+#### Numeric
+```{r}
+sbp * 2
+sbp ^ 2
+log(sbp)
+sqrt(sbp)
+sbp + sbp
+```
+
+#### Dates
+```{r}
+Age <- as.numeric( round ( (today - dob)/365.25,0) )
+Age
+class(Age)
+```
+
+#### Character
+```{r}
+paste(address , ", Ireland",sep="")
+```
+
+#### Dates
+```{r}
+dob +3
+day <- as.Date("28/5/1970",format="%d/%m/%Y")
+dob > day
+dob < day
+```
+
+### Indexing vectors
+
+#### Numerical indexing
+```{r}
+sbp
+sbp[2]
+sbp[1:3]
+sbp[c(1,4)]
+```
+
+#### Conditional indexing
+```{r}
+ci <- sbp>130
+sbp[ci]
+```
+
+```{r}
+sbp[sbp>130]
+```
+
+
+
+## Dataframes
+```{r}
+dat <- data.frame(sbp = sbp,
+                  address = address,
+                  gender = gender,
+                  dob = dob)
+dat
+```
+
+
+### Indexing data.frames
+
+```{r}
+dat[1,1]
+dat[1:3,3]
+dat[1,]
+dat[,2]
+```
+
+```{r}
+dat[,"gender"]
+dat[1:3,c("sbp","dob")]
+```
+
+
+```{r}
+dat[sbp>130,"gender"]
+```
+
+
+#### `$` operator
+```{r}
+dat$gender
+dat$gender[1:2]
+dat$gender[dat$sbp>130]
+```
+
+
+# Missing values
+```{r}
+sbp[3] <- NA
+address[1] <- NA
+gender[2] <- NA
+dob[2] <- NA
+sbp
+address
+gender
+dob
+```
+
+## Ask if it's missing `is.na`
+```{r}
+is.na(sbp)
+is.na(gender)
+is.na(dob)
+is.na(address)
+```
+
+## The `!` operator
+```{r}
+sbp <- sbp[!is.na(sbp)]
+gender <- gender[!is.na(gender)]
+dob <- dob[!is.na(dob)]
+address <- address[!is.na(address)]
+```
+
+
+# Exporting and Importing files
+
+## Exporting
+
+### .csv
+```{r}
+write.csv(dat,"test.csv",row.names = FALSE)
+```
+
+### .RData
+```{r}
+save(dat,file="test.RData")
+```
+
+## Importing
+
+## Import a csv file
+```{r}
+dat <- read.csv("test.csv",header=TRUE)
+dat
+```
+
+## Import an excel file
+```{r}
+library(readxl)
+dat <- read_excel("test.xlsx")
+dat
+```
+
+## Import an RData file
+```{r}
+load("test.RData")
+dat
+```
+
