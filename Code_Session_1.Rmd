@@ -324,7 +324,7 @@ dat
 ## Import an excel file
 ```{r}
 library(readxl)
-dat <- read_excel("test.xlsx")
+#dat <- read_excel("test.xlsx")
 dat
 ```
 
@@ -333,4 +333,65 @@ dat
 load("test.RData")
 dat
 ```
+
+
+
+# Some basic analysis
+
+Load the BodyImage dataset.
+```{r}
+dat <- read.csv("BodyImage.csv",header=TRUE)
+```
+
+Calculate the average and standard deviation of body image at baseline
+```{r}
+mean(dat$Early.Preg.BI)
+sd(dat$Early.Preg.BI)
+```
+
+Calculate basic summaries
+```{r}
+summary(dat$Early.Preg.BI)
+```
+
+Generate a boxplot of baseline measurements by treatment arm.
+```{r}
+plot(Early.Preg.BI ~ Exercise.Group,data=dat)
+```
+
+Generate a scatter plot of before and after BI meassurements with the line of equality
+```{r}
+plot(After.Preg.BI ~ Early.Preg.BI,data=dat)
+
+```
+
+
+Create a new column with the change in body image
+```{r}
+dat$Change <- dat$After.Preg.BI - dat$Early.Preg.BI
+```
+
+Plot the change of the differences by group
+```{r}
+plot(Change~Exercise.Group,data=dat)
+```
+
+Calculate a 95% confidence interval for the differences in population mean changes (and a p-value)
+```{r}
+out <- t.test(Change~Exercise.Group,data=dat)
+out
+```
+
+Access to all the components of the output
+```{r}
+names(out)
+out$p.value
+out$conf.int
+LB <- out$conf.int[1]
+LB
+UB <- out$conf.int[2]
+UB
+```
+
+
 
