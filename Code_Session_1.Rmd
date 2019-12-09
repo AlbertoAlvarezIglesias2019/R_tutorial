@@ -361,7 +361,12 @@ plot(Early.Preg.BI ~ Exercise.Group,data=dat)
 
 Generate a scatter plot of before and after BI meassurements with the line of equality
 ```{r}
-plot(After.Preg.BI ~ Early.Preg.BI,data=dat)
+library(ggplot2)
+ggplot(dat,aes(x=Early.Preg.BI,y=After.Preg.BI,color=Exercise.Group)) +
+  geom_point() +
+  xlim(10,35) +
+  ylim(10,35)+
+  geom_abline(intercept = 0, slope = 1)
 
 ```
 
